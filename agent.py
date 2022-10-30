@@ -26,8 +26,14 @@ class BaseAgent(object):
 
     def act(self, state, ava_actions):
         if self.model is not None:
-
             action, _states = self.model.predict(state)
+            while action not in ava_actions:
+                action, _states = self.model.predict(state)
+            nstate = after_action_state(state, action)
+            gstatus = check_game_status(nstate[0])
+            if gstatus > 0:
+                if gstatus == self.code:
+                    return action
             return action
         else:
             return self.random_act(state, ava_actions)
